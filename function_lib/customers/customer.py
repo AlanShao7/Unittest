@@ -59,20 +59,17 @@ class Customer:
         return res_list
 
     @staticmethod
-    def add_customer_one(name, parent_id='', phone='', tel='', applying_flag='0'):
+    def add_customer_one(name, parent_id='', phone='', tel='', applying_switch=0):
         """
         新增一个客户
-        :param applying_flag: 是否开启审批
+        :param applying_switch: 是否开启审批 0关闭 1开启
         :param name:客户姓名
         :param parent_id:商机客户Id
         :param phone:手机
         :param tel:电话
         :return:新增客户返回结果
         """
-        if applying_flag == '0':
-            applying = ''
-        else:
-            applying = 'applying'
+        applying = '' if applying_switch == 0 else 'applying'
 
         api = '/api/customers'
         data = {
