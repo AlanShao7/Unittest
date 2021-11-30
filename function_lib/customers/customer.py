@@ -83,7 +83,7 @@ class Customer:
         return res
 
     @staticmethod
-    def add_customer_much(count, parent_id='', phone='', tel='', applying_flag='0'):
+    def add_customer_much(count, parent_id='', phone='', tel='', applying_flag=0):
         """
 
         :param applying_flag: 是否开启审批 0关闭 1开启
@@ -94,10 +94,7 @@ class Customer:
         :return:新增客户的返回值列表
         """
         res_list = []
-        if applying_flag == '0':
-            applying = ''
-        else:
-            applying = 'applying'
+        applying = '' if applying_flag == 0 else 'applying'
         api = 'api/customers'
         for i in range(count):
             name = '新增客户' + str(i+1)
