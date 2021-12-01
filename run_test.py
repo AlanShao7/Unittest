@@ -1,8 +1,11 @@
 import unittest
 import os
 import time
+import sys
 import HTMLTestRunner
-
+file_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(file_path)
+from case_lib.customers.customers_case import Customer_case
 
 
 def html_report_folder_path(folder_name):
@@ -19,7 +22,7 @@ def html_report_folder_path(folder_name):
 def test_cases_set():
     test_suite = unittest.TestSuite()
     # 输入class的地址
-
+    test_suite.addTest(unittest.makeSuite(Customer_case))
     # print(test_suite)
 
     return test_suite
