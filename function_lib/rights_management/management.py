@@ -19,7 +19,7 @@ class RightManagement:
         name: 权限中文名称，对应一种业务权限。
         subject: 操作的对象模块名，对应业务模块，是业务名称英文下划线小写字母组成的单词。
         action： 权限对应的具体操作，一般情况： show=查看， edit=编辑， destroy=删除， create=新增，
-        update=更新，crud=增删改查，merge=合并，enable=开启，disable=禁用，import=导入，export=导出
+        update=更新，crud=增删改查，merge=合并，enable=开启，disable=禁用，import=导入，export=导出  transfer=转移
         :return:返回的是某一个模块下有的权限  例如customer下有编辑权限 则返回列表中有edit
         """
         user_list = []
@@ -29,6 +29,23 @@ class RightManagement:
         return user_list
 
 
+class User_id:
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def my_user_id():
+        """
+        获取自己的信息
+        :return: .json()['data']['users'][0]['id']  获取当前用户id
+        """
+        res = HttpRequest().send_request('/api/v2/user/leader', 'get')
+        return res
+
+
 if __name__ == '__main__':
     a = RightManagement()
     print(a)
+    b = User_id.my_user_id()
+    print(b.json()['data']['users'][0]['id'])

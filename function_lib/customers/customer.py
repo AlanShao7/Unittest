@@ -21,7 +21,7 @@ class Customer:
         return res_permissions
 
     @staticmethod
-    def get_customers_list(page=1, per_page=10, query='', custom_field_name='', department_id='', sort='', order='', tab_type='', user_id='', status='', category='', real_revisit_at='', product_id=''):
+    def get_customers_list(page=1, per_page=10, query=None, custom_field_name=None, department_id=None, sort=None, order=None, tab_type=None, user_id=None, status=None, category=None, real_revisit_at=None, product_id=None):
         """
         获取客户列表
         :param page: 页码
@@ -59,7 +59,7 @@ class Customer:
         return res_list
 
     @staticmethod
-    def add_customer_one(name, parent_id='', phone='', tel='', applying_switch=0):
+    def add_customer_one(name, parent_id=None, phone=None, tel=None, applying_switch=0):
         """
         新增一个客户
         :param applying_switch: 是否开启审批 0关闭 1开启
@@ -83,7 +83,7 @@ class Customer:
         return res
 
     @staticmethod
-    def add_customer_much(count, parent_id='', phone='', tel='', applying_switch=0):
+    def add_customer_much(count, parent_id=None, phone=None, tel=None, applying_switch=0):
         """
 
         :param applying_switch: 是否开启审批 0关闭 1开启
@@ -121,7 +121,7 @@ class Customer:
         :param nowin_opportunities:是否仅转移未赢单的商机 (true/false), 在transfer_opportunities为true时才需要传递这个参数
         :return:转移客户后的返回结果
         """
-        api = '/api/pc/customers/' + customer_id + '/update_user'
+        api = '/api/pc/customers/' + str(customer_id) + '/update_user'
         data = {
             'id': customer_id,
             'user_id': user_id,
@@ -129,7 +129,9 @@ class Customer:
             'transfer_opportunities': transfer_opportunities,
             'nowin_opportunities': nowin_opportunities,
         }
-        res = HttpRequest().send_request(api, 'put', data=data)
+        res = HttpRequest().send_request(api, 'put', json=data)
+        if res.status_code != 200:
+            print(res.status_code)
         return res
 
     # def transfer_customers_much(self, resource_ids: list,  user_id: int, resource_type='Customer', transfer_contracts='false', transfer_opportunities='false', nowin_opportunities='false'):
@@ -173,6 +175,43 @@ class Customer:
         res = HttpRequest().send_request(api, 'get', data)
         return res
 
+    @staticmethod
+    def get_customers_id(batch_size: int, query=None, custom_field_name=None, department_id=None, sort=None, order=None, tab_type=None, user_id=None, status=None, category=None, real_revisit_at=None, product_id=None):
+        """
+
+        :param batch_size: 批量获取条数 200, 500, 1000
+        :param query:String	搜索关键字
+        :param custom_field_name:String	搜索字段
+        :param department_id:Long	部门id
+        :param sort:String	排序类型(created_at ), api/v2/customers/filter_sort_group 返回值中sorts的value
+        :param order:String	排序方式（asc desc）
+        :param tab_type:String	值为[my, sub, common, assist]或不传
+        :param user_id:Long	员工筛选
+        :param status:Long	状态, 值为 api/v2/customers/status/filter_options返回值
+        :param category:Long	分类
+        :param real_revisit_at:String	实际跟进时间
+        :param product_id:Long	product筛选
+        :return:返回请求值，   获取id_list   res['data']
+        """
+        data = {
+            'batch_size': batch_size,
+            'query': query,
+            'custom_field_name': custom_field_name,
+            'department_id': department_id,
+            'sort': sort,
+            'order': order,
+            'tab_type': tab_type,
+            'user_id': user_id,
+            'status': status,
+            'category': category,
+            'real_revisit_at': real_revisit_at,
+            'product_id': product_id
+        }
+        res = HttpRequest().send_request('/api/pc/customers', 'get', params=data)
+        return res
+
 
 if __name__ == '__main__':
     pass
+    a = Customer.get_customers_id(10)
+    print(a.status_code, a.json()['data']['list'][0]['id'])

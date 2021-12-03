@@ -11,6 +11,7 @@ class Gettoken:
     def token(self):
         req = requests.post(url=self.login_url, params=self.data)
         user_token = req.json()['data']['user_token']
+        print(user_token)
         return user_token
 
 
@@ -20,12 +21,13 @@ class HttpRequest:
         token = Gettoken()
         user_token = token.token()
         token = 'Token token=' + user_token
+        print(token)
         self.url = 'https://lxcrm-test.weiwenjia.com'
         self.header = {
             "Authorization": token,
         }
 
-    def send_request(self, api_name, method, params=None, content_type='application/json', data=None, json=None, timeout=10):
+    def send_request(self, api_name, method, params=None, content_type='application/json;charset=UTF-8', data=None, json=None, timeout=10):
         """
         request封装
         :param self:
@@ -41,22 +43,27 @@ class HttpRequest:
         self.header['content-type'] = content_type
         new_method = method.lower()
         if new_method == 'get':
-            print("正在请求接口，请求地址{},请求参数{},".format(self.url + api_name, params))
+            print("正在请求接口")
             res = requests.get(url=self.url + api_name, params=params, headers=self.header, timeout=timeout)
             return res
         elif new_method == 'post':
             if json:
-                print("正在请求接口，请求地址{},请求参数{},".format(self.url + api_name, json))
+                print("正在请求接口")
                 res = requests.post(url=self.url+api_name, json=json, headers=self.header, timeout=timeout)
                 return res
             else:
-                print("正在请求接口，请求地址{},请求参数{},".format(self.url + api_name, data))
+                print("正在请求接口")
                 res = requests.post(url=self.url+api_name, data=data, headers=self.header, timeout=timeout)
                 return res
         elif new_method == 'put':
-            print("正在请求接口，请求地址{},请求参数{},".format(self.url + api_name, data))
-            res = requests.put(url=self.url+api_name, data=data, headers=self.header, timeout=timeout)
-            return res
+            if json:
+                print("正在请求接口", self.url+api_name)
+                res = requests.put(url=self.url+api_name, json=data, headers=self.header, timeout=timeout)
+                return res
+            else:
+                print("正在请求接口", self.url+api_name)
+                res = requests.put(url=self.url+api_name, data=data, headers=self.header, timeout=timeout)
+                return res
 
 
 
