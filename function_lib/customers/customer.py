@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 file_path = os.path.dirname(os.path.abspath(__file__))
@@ -13,7 +14,7 @@ class Customer:
     @staticmethod
     def customers_permissions():
         """
-        获取客户权限
+        获取客户权限   转移类型
         :return: 客户权限
         """
         api = '/api/pc/customers/permissions'
@@ -21,7 +22,7 @@ class Customer:
         return res_permissions
 
     @staticmethod
-    def get_customers_list(page=1, per_page=10, query=None, custom_field_name=None, department_id=None, sort=None, order=None, tab_type=None, user_id=None, status=None, category=None, real_revisit_at=None, product_id=None):
+    def get_customers_list(page=1, per_page=10, query=None,  custom_field_name=None, department_id=None, sort=None, order=None, tab_type=None, user_id=None, status=None, category=None, real_revisit_at=None, product_id=None):
         """
         获取客户列表
         :param page: 页码
@@ -210,8 +211,82 @@ class Customer:
         res = HttpRequest().send_request('/api/pc/customers', 'get', params=data)
         return res
 
+    @staticmethod
+    def update_customer(customer_id: int, customer_user_id=None, customer_name=None, customer_status=None, customer_note=None, customer_category=None, customer_source=None, customer_industry=None, customer_staff_size=None, customer_want_department_id=None, customer_address_attributes_detail_address=None, customer_address_attributes_tel=None, customer_address_attributes_url=None, customer_address_attributes_country_id=None, customer_address_attributes_province_id=None, customer_address_attributes_city_id=None, customer_address_attributes_district_id=None, customer_address_attributes_zip=None, customer_address_attributes_fax=None, customer_address_attributes_qq=None, customer_address_attributes_wechat=None, customer_address_attributes_wangwang=None, customer_address_attributes_phone=None, customer_address_attributes_email=None):
+        """
+        编辑客户
+        :param customer_id:  必填 客户的id，替换掉url的:id
+        :param check_duplicates:是否需要查重 传 字符串 ‘true’ ‘flase’.
+        :param customer_user_id:负责人
+        :param customer_name:客户名称
+        :param customer_status:状态
+        :param customer_note:备注
+        :param customer_category:	客户类型
+        :param customer_source:客户来源
+        :param customer_industry:	所属行业
+        :param customer_staff_size:	人员规模
+        :param customer_want_department_id:	部门
+        :param customer_address_attributes_detail_address:	地址相关的 详细地址
+        :param customer_address_attributes_tel:
+        :param customer_address_attributes_url:
+        :param customer_address_attributes_country_id:
+        :param customer_address_attributes_province_id:
+        :param customer_address_attributes_city_id:
+        :param customer_address_attributes_district_id:
+        :param customer_address_attributes_zip:
+        :param customer_address_attributes_fax:
+        :param customer_address_attributes_qq:
+        :param customer_address_attributes_wechat:
+        :param customer_address_attributes_wangwang:
+        :param customer_address_attributes_phone:
+        :param customer_address_attributes_email:
+        :return:返回编辑完的该客户的所有的值
+    """
+        data = {
+            'customer': {
+                'user_id': customer_user_id,
+                'name': customer_name,
+                'status': customer_status,
+                'note': customer_note,
+                'category': customer_category,
+                'source': customer_source,
+                'industry': customer_industry,
+                'staff_size': customer_staff_size,
+                'want_department_id': customer_want_department_id,
+                'address_attributes': {
+                    'detail_address': customer_address_attributes_detail_address,
+                    'tel': customer_address_attributes_tel,
+                    'url': customer_address_attributes_url,
+                    'country_id': customer_address_attributes_country_id,
+                    'province_id': customer_address_attributes_province_id,
+                    'city_id': customer_address_attributes_city_id,
+                    'district_id': customer_address_attributes_district_id,
+                    'zip': customer_address_attributes_zip,
+                    'fax': customer_address_attributes_fax,
+                    'qq': customer_address_attributes_qq,
+                    'wechat': customer_address_attributes_wechat,
+                    'wangwang': customer_address_attributes_wangwang,
+                    'phone': customer_address_attributes_phone,
+                    'email': customer_address_attributes_email
+                }
+            }}
+        for key in list(data['customer'].keys()):
+            if not data['customer'].get(key):
+                del data['customer'][key]
+        for key in list(data['customer']['address_attributes'].keys()):
+            if not data['customer']['address_attributes'].get(key):
+                del data['customer']['address_attributes'][key]
+            if not data['customer']['address_attributes']:
+                del data['customer']['address_attributes']
+        if not data['customer']:
+            data = None
+        data = json.dumps(data)
+        url = '/api/v2/customers/' + str(customer_id)
+        res = HttpRequest().send_request(api_name=url, method='put', data=data)
+        return res
+
 
 if __name__ == '__main__':
-    pass
-    a = Customer.get_customers_id(10)
-    print(a.status_code, a.json()['data']['list'][0]['id'])
+    # a = Customer.get_customers_id(10)
+    # print(a.status_code, a.json()['data']['list'][0]['id'])
+    a = Customer.update_customer(customer_id=2713477, customer_status='391968')

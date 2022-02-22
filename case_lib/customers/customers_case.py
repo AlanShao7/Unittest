@@ -12,10 +12,21 @@ from function_lib.rights_management.management import User_id
 class Customer_case(unittest.TestCase):
 
     def setUp(self) -> None:
+        """
+        self.customer_operation_permissions  客户模块操作权限
+        self.customer_transfer_permissions   转移客户权限
+        self.customer_id_list                获取前100个客户的列表
+        self.my_user                         当前用户信息
+        self.customer_id                     获取100个客户的id
+        self.user_id                         获取当前用户id
+        :return:
+        """
         self.customer_operation_permissions = RightManagement().permission('customer')
         self.customer_transfer_permissions = Customer.customers_permissions()
         self.customer_id_list = Customer.get_customers_id(100)
         self.my_user = User_id.my_user_id()
+        self.customer_id = self.customer_id_list.json()['data']['list'][0]['id']
+        self.user_id = self.my_user.json()['data']['users'][0]['id']
 
     def test001(self):
         """
@@ -39,15 +50,24 @@ class Customer_case(unittest.TestCase):
             self.assertEqual(res.status_code, 401)
 
     def test003(self):
-        customer_id = self.customer_id_list.json()['data']['list'][0]['id']
-        user_id = self.my_user.json()['data']['users'][0]['id']
-        print(customer_id, user_id)
-        res = Customer.transfer_customers_one(customer_id, user_id)
+        """
+        判断客户是否有转移权限
+        :return:
+        """
+        print(self.customer_id, self.user_id)
+        res = Customer.transfer_customers_one(self.customer_id, self.user_id)
         if 'transfer' in self.customer_operation_permissions:
             print(res.status_code)
             self.assertEqual(res.status_code, 200)
         else:
             self.assertEqual(res.status_code, 401)
+
+    def test004(self):
+        """
+        判断客户是否有编辑权限
+        :return:
+        """
+        pass
 
 
 if __name__ == '__main__':
