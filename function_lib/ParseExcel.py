@@ -42,6 +42,7 @@ class ParseExcel():
         """
         try:
             sheet = self.workbook.sheetnames[sheetIndex]
+            print(1, sheet,type(sheet))
             return sheet
         except Exception as err:
             raise err
@@ -65,7 +66,8 @@ class ParseExcel():
     def getRow(self, sheet, rowNo):
         #获取sheet中某一列，返回的是这一列所有的数据
         try:
-            rows = [row for row in sheet.iter_rows()]
+            ws = self.workbook[sheet]
+            rows = [row for row in ws.iter_rows()]
             return rows[rowNo - 1]
         except Exception as err:
             raise err
@@ -73,7 +75,8 @@ class ParseExcel():
     def getColumn(self, sheet, colNo):
         #获取sheet中某一行，返回的是这一行所有的数据
         try:
-            cols = [col for col in sheet.iter_cols()]
+            ws = self.workbook[sheet]
+            cols = [col for col in ws.iter_cols()]
             return cols[colNo - 1]
         except Exception as err:
             raise err
@@ -90,9 +93,9 @@ class ParseExcel():
 
 if __name__ == '__main__':
     pe = ParseExcel()
-    pe.loadWorkBook(file_path)
+    a = pe.loadWorkBook(file_path)
     sheet = pe.getSheetByIndex(0)
-    print(sheet)
+    print(sheet, type(sheet))
     rows = pe.getRow(sheet, 1)
     for i in rows:
         print(i.value)
